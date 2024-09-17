@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Elegante</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box">
+            <div class="bot-message">
+                <p>¡Hola! Soy un asistente que recomienda videojuegos con IA, ¿Describeme un juego que te guste?</p>
+            </div>
+        </div>
+        <form class="input-container" id="chat-form">
+            <input type="text" id="text_input" placeholder="Escribe tu mensaje..." required>
+            <input type="submit" value="Enviar">
+        </form>
+    </div>
+
+    <script>
+        // Función para agregar un mensaje al chat
+        function addMessage(message, isUser = true) {
+            const chatBox = document.getElementById('chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+            const messageParagraph = document.createElement('p');
+            messageParagraph.textContent = message;
+            messageDiv.appendChild(messageParagraph);
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;  // Desplazarse automáticamente hacia el último mensaje
+        }
+
+        // Manejar el envío del formulario
+        document.getElementById('chat-form').addEventListener('submit', function (e) {
+            e.preventDefault();  // Prevenir la recarga de la página
+            const inputField = document.getElementById('text_input');
+            const userMessage = inputField.value.trim();
+
+            if (userMessage) {
+                addMessage(userMessage);  // Agregar mensaje del usuario
+                inputField.value = '';  // Limpiar el campo de entrada
+
+                // Enviar el mensaje del usuario al backend mediante AJAX
+                fetch('/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text_input: userMessage }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Agregar la respuesta del bot al chat
+                    addMessage(data.result, false);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+
+        // Para que el chat siempre baje hacia el último mensaje al cargar la página
+        window.onload = function () {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        };
+    </script>
+</body>
+</html>
