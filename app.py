@@ -3,7 +3,7 @@ import requests
 import json
 
 from flask import Flask, render_template, request
-from helpers.utils import cambiar_a_mayusculas  # Importamos la función que cambiará a mayúsculas
+from helpers.utils import cambiar_a_mayusculas, call_predict_function  # Importamos la función que cambiará a mayúsculas
 
 app = Flask(__name__)
 
@@ -18,6 +18,8 @@ def process():
 
     # Convertimos el input a mayúsculas usando la función cambiar_a_mayusculas
     respuesta_cf = cambiar_a_mayusculas(user_input)
+    respuesta_cf = call_predict_function(user_input)
+
 
     # Return the processed result as JSON
     return jsonify({'result': respuesta_cf})
