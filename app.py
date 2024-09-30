@@ -17,7 +17,7 @@ def process():
     user_input = data.get('text_input', '')
 
     # Convertimos el input a mayúsculas usando la función cambiar_a_mayusculas
-    respuesta_cf = cambiar_a_mayusculas(user_input)
+    # respuesta_cf = cambiar_a_mayusculas(user_input)
     respuesta_cf = call_predict_function(user_input)
 
 
